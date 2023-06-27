@@ -98,14 +98,14 @@
                 alert('Vui lòng nhập tên miền hoặc địa chỉ IP');
                 return;
             }
-
+        
             const dnsResultElement = document.getElementById('dns-result').tBodies[0];
             dnsResultElement.innerHTML = '';
-
+        
             try {
                 let domain = userInput;
                 let recordTypes = ['NS', 'A', 'MX', 'TXT', 'CNAME', 'SOA', 'PTR'];
-
+        
                 if (isIPv4Address(userInput)) {
                     domain = reverseIP(userInput) + '.in-addr.arpa';
                     recordTypes = ['PTR', 'SOA']; // Thêm 'SOA' vào danh sách
@@ -113,35 +113,44 @@
                     domain = reverseIPv6(userInput);
                     recordTypes = ['PTR', 'SOA']; // Thêm 'SOA' vào danh sách
                 }
-
+        
                 for (const recordType of recordTypes) {
                     const dnsInfo = await getDnsInfo(domain, recordType);
                     const records = dnsInfo.Answer || [];
-
+        
+                    // Xử lý phần "Authority" nếu tồn tại và là bản ghi SOA
+                    if (dnsInfo.Authority && dnsInfo.Authority.length > 0 && recordType === 'SOA') {
+                        dnsInfo.Authority.forEach(record => {
+                            if (record.type === 6) { // Kiểm tra nếu bản ghi là SOA
+                                records.push(record);
+                            }
+                        });
+                    }
+        
                     for (const record of records) {
                         const row = document.createElement('tr');
                         const nameCell = document.createElement('td');
                         nameCell.textContent = record.name;
                         row.appendChild(nameCell);
-
+        
                         const typeCell = document.createElement('td');
                         const typeName = recordTypeNumberToName(record.type);
                         typeCell.textContent = typeName;
                         row.appendChild(typeCell);
-
+        
                         const valueCell = document.createElement('td');
                         valueCell.textContent = record.data;
                         row.appendChild(valueCell);
-
+        
                         const ttlCell = document.createElement('td');
                         ttlCell.textContent = record.TTL;
                         row.appendChild(ttlCell);
-
+        
                         const copyCell = document.createElement('td');
                         const copyButton = createCopyButton(`${record.data}`);
                         copyCell.appendChild(copyButton);
                         row.appendChild(copyCell);
-
+        
                         dnsResultElement.appendChild(row);
                     }
                 }

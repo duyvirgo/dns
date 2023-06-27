@@ -57,6 +57,7 @@ button.copy-btn {
     border: none;
     border-radius: 5px;
     cursor: pointer;
+    margin-left: 12px;
 }
 
 #search-button:hover {
