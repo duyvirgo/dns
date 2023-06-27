@@ -4,37 +4,39 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DNS Lookup with Jerry</title>
-    <link rel="stylesheet" href="style.css">
-    <meta name="description" content="Công Cụ Check DNS được thiết kế bởi Jerry"/>
-    <meta name="robots" content="follow, index, max-snippet:-1, max-video-preview:-1, max-image-preview:large"/>
+    <title>DNS Lookup with Me</title>
+
+    <meta name="description" content="Công Cụ Check DNS được thiết kế bởi Duy" />
+    <meta name="robots" content="follow, index, max-snippet:-1, max-video-preview:-1, max-image-preview:large" />
     <link rel="canonical" href="https://duyvirgo.github.io/dns/" />
     <meta property="og:locale" content="vi_VN" />
     <meta property="og:type" content="website" />
-    <meta property="og:title" content="DNS Lookup with Jerry" />
-    <meta property="og:description" content="Công Cụ Check DNS được thiết kế bởi Jerry" />
+    <meta property="og:title" content="DNS Lookup with Duy" />
+    <meta property="og:description" content="Công Cụ Check DNS được thiết kế bởi Duy" />
     <meta property="og:url" content="https://duyvirgo.github.io/dns/" />
-    <meta property="og:site_name" content="DNS Lookup with Jerry" />
+    <meta property="og:site_name" content="DNS Lookup with Duy" />
     <meta property="og:updated_time" content="2022-03-22T06:53:45+00:00" />
     <meta property="og:image" content="https://i.imgur.com/AueCpMG.png" />
     <meta property="og:image:secure_url" content="https://i.imgur.com/AueCpMG.png" />
     <meta property="og:image:width" content="1200" />
     <meta property="og:image:height" content="627" />
-    <meta property="og:image:alt" content="DNS Lookup with Jerry" />
+    <meta property="og:image:alt" content="DNS Lookup with Duy" />
     <meta property="og:image:type" content="image/png" />
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content="DNS Lookup with Jerry" />
-    <meta name="twitter:description" content="Công Cụ Check DNS được thiết kế bởi Jerry" />
+    <meta name="twitter:title" content="DNS Lookup with Duy" />
+    <meta name="twitter:description" content="Công Cụ Check DNS được thiết kế bởi Duy" />
     <meta name="twitter:image" content="https://i.imgur.com/AueCpMG.png" />
+    <link rel="stylesheet" href="style.css">
+    <script src="script.js" defer></script>
 
 </head>
 
 <body>
     <div class="container">
-        <h1>DNS Lookup with Jerry</h1>
+        <h1>DNS Lookup with Me</h1>
         <form id="search-form">
             <input type="text" id="search-input" placeholder="Nhập tên miền">
-            <button type="submit" id="search-button">Tìm kiếm</button>
+            <button type="submit" id="search-button">Search</button>
         </form>
         <table id="dns-result">
             <thead>
@@ -42,128 +44,12 @@
                     <th>Name</th>
                     <th>Type</th>
                     <th>Value</th>
-                    <th>TLS</th>
+                    <th>Tls</th>
                 </tr>
             </thead>
             <tbody></tbody>
         </table>
     </div>
-
-    <script>
-        // function getDomainFromPath() {
-        //     const urlPath = window.location.pathname;
-        //     const domainMatch = urlPath.match(/^\/(.+)$/);
-        //     return domainMatch ? domainMatch[1] : '';
-        // }
-
-        async function getDnsInfo(domain, recordType) {
-            const apiUrl = `https://dns.google.com/resolve?name=${domain}&type=${recordType}`;
-            const response = await fetch(apiUrl);
-            const data = await response.json();
-            return data;
-        }
-
-        document.getElementById('search-form').addEventListener('submit', (event) => {
-            event.preventDefault(); // Ngăn trình duyệt gửi biểu mẫu, vì chúng ta đang xử lý bằng JavaScript
-            handleSearchButtonClick();
-        });
-
-        function copyTextToClipboard(text) {
-            const textarea = document.createElement('textarea');
-            textarea.value = text;
-            document.body.appendChild(textarea);
-            textarea.select();
-            document.execCommand('copy');
-            document.body.removeChild(textarea);
-        }
-
-        function createCopyButton(value) {
-            const button = document.createElement('button');
-            button.className = 'copy-btn';
-            button.textContent = 'Copy';
-            button.onclick = () => copyTextToClipboard(value);
-            return button;
-        }
-
-        function recordTypeNumberToName(typeNumber) {
-            const dnsRecordTypes = {
-                1: 'A',
-                2: 'NS',
-                5: 'CNAME',
-                6: 'SOA',
-                12: 'PTR',
-                15: 'MX',
-                16: 'TXT',
-                28: 'AAAA',
-                33: 'SRV',
-                43: 'DS',
-                46: 'RRSIG',
-                48: 'DNSKEY',
-                256: 'CAA',
-                257: 'CAA',
-            };
-
-            return dnsRecordTypes[typeNumber] || typeNumber;
-        }
-
-        async function handleSearchButtonClick() {
-            const domainInput = document.querySelector('input[type="text"]');
-            const domain = domainInput.value.trim();
-            if (!domain) {
-                alert('Vui lòng nhập tên miền');
-                return;
-            }
-
-            const dnsResultElement = document.getElementById('dns-result').tBodies[0];
-            dnsResultElement.innerHTML = '';
-
-            try {
-                const recordType = 'ANY'; // Thay đổi loại bản ghi thành ANY để hiển thị tất cả các bản ghi
-                const dnsInfo = await getDnsInfo(domain, recordType);
-                const records = dnsInfo.Answer || [];
-
-                for (const record of records) {
-                    const row = document.createElement('tr');
-                    const nameCell = document.createElement('td');
-                    nameCell.textContent = record.name;
-                    row.appendChild(nameCell);
-
-                    const typeCell = document.createElement('td');
-                    const typeName = recordTypeNumberToName(record.type); // Sử dụng hàm chuyển đổi số thành tên bản ghi
-                    typeCell.textContent = typeName;
-                    row.appendChild(typeCell);
-
-                    const valueCell = document.createElement('td');
-                    valueCell.textContent = record.data;
-                    row.appendChild(valueCell);
-
-                    const ttlCell = document.createElement('td');
-                    ttlCell.textContent = record.TTL;
-                    row.appendChild(ttlCell);
-
-                    // Thêm nút Copy vào cuối mỗi hàng
-                    const copyCell = document.createElement('td');
-                    const copyButton = createCopyButton(`${record.data}`);
-                    copyCell.appendChild(copyButton);
-                    row.appendChild(copyCell);
-
-                    dnsResultElement.appendChild(row);
-                }
-            } catch (error) {
-                console.error(error);
-                alert('Có lỗi xảy ra, vui lòng thử lại');
-            }
-
-            // // Thêm phần này để tự động tìm kiếm nếu có tên miền trong đường dẫn
-            // const domainFromPath = getDomainFromPath();
-            // if (domainFromPath) {
-            //     const domainInput = document.querySelector('input[type="text"]');
-            //     domainInput.value = domainFromPath;
-            //     handleSearch(domainFromPath);
-            // }
-
-        }
-    </script>
 </body>
 
 </html>
