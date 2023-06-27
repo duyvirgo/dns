@@ -1,4 +1,4 @@
-<script>
+
         // function getDomainFromPath() {
         //     const urlPath = window.location.pathname;
         //     const domainMatch = urlPath.match(/^\/(.+)$/);
@@ -104,7 +104,7 @@
 
             try {
                 let domain = userInput;
-                let recordTypes = ['NS', 'A', 'AAAA', 'MX', 'TXT', 'CNAME', 'SOA', 'PTR'];
+                let recordTypes = ['NS', 'A', 'MX', 'TXT', 'CNAME', 'SOA', 'PTR'];
 
                 if (isIPv4Address(userInput)) {
                     domain = reverseIP(userInput) + '.in-addr.arpa';
@@ -150,8 +150,3 @@
                 alert('Có lỗi xảy ra, vui lòng thử lại');
             }
         }
-
-    </script>
-</body>
-
-</html>
